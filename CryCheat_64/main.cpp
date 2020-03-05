@@ -13,9 +13,9 @@ extern int64_t __stdcall AddConsoleMessage(const std::string& message)
 	return ((int64_t(*)(const char*, ...))(0x36501770))(msg.c_str());
 }
 
-inline unsigned long long GetModuleH(LPCSTR module)
+inline unsigned __int64 GetModuleH(LPCSTR module)
 {
-	return reinterpret_cast<unsigned long long>(GetModuleHandle(module));
+	return reinterpret_cast<unsigned __int64>(GetModuleHandle(module));
 }
 
 extern 	D3D10HK::IDXGISwapChain__Present Present = nullptr;
@@ -30,8 +30,13 @@ bool Init(HMEMORYMODULE hCryGame)
 	ghWnd = GetForegroundWindow();
 	if (!ghWnd)	return false;
 
-	if (D3D10HK::InitiateHook(ghWnd, &HookedPresentD3D10, &Present))
-		return true;
+
+
+	if (AddressDLL.Render.DX10) {
+		if (D3D10HK::InitiateHook(ghWnd, &HookedPresentD3D10, &Present))
+			return true;
+	}
+	
 
 	return true;
 }
@@ -61,12 +66,6 @@ BOOL WINAPI DllMain(HINSTANCE hInst, DWORD fdwReason, LPVOID)
 
 /*TODO:////////////////////////////////////////////////////////////////////////////////////////////
 Vehicle goodmod //
-no owerheat //
 no spread
-unlimited night vision device //
 one hit kill 
-no recall arrow //
-unlimited energy //
-unlimited health //
-unlimited ammo //
 */

@@ -8,12 +8,13 @@ HRESULT HookedPresentD3D10(IDXGISwapChain * pSwap, UINT SyncInterval, UINT Flags
 void UpdateCheat();
 struct AddressDll
 {
-	unsigned long long CryGame;
-	unsigned long long CryAction;
-	unsigned long long CrySystem;
+	unsigned __int64 CryGame;
+	unsigned __int64 CryAction;
+	unsigned __int64 CrySystem;
 	struct CryRender
 	{
-		unsigned long long DX9;
-		unsigned long long DX10;
+		unsigned __int64 DX9;
+		unsigned __int64 DX10;
 	}Render;
+	unsigned __int64 pCPlayer;
 };
