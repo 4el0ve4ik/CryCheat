@@ -1,5 +1,4 @@
 #include "proxyCryGame.h"
-#include "CryGame_dll.hpp"
 
 CreateEditorGame_t CreateEditorGame_p;
 CreateGame_t CreateGame_p;
@@ -26,13 +25,13 @@ EXPORT int64_t  CryModuleGetMemoryInfo(int64_t arg)
 	return CryModuleGetMemoryInfo_p(arg);
 }
 
-HMEMORYMODULE LoadCryGame()
+HMODULE LoadCryGame()
 {
-	HMEMORYMODULE hmodule = MemoryLoadLibrary(CryGame_dll::data, CryGame_dll::size);
-	CreateEditorGame_p = (CreateEditorGame_t)MemoryGetProcAddress(hmodule, "CreateEditorGame");
-	CreateGame_p = (CreateGame_t)MemoryGetProcAddress(hmodule, "CreateGame");
-	CreateGameStartup_p = (CreateGameStartup_t)MemoryGetProcAddress(hmodule, "CreateGameStartup");
-	CryModuleGetMemoryInfo_p = (CryModuleGetMemoryInfo_t)MemoryGetProcAddress(hmodule, "CryModuleGetMemoryInfo");
+	HMODULE hmodule = LoadLibrary("CryGameHooked.dll");
+	CreateEditorGame_p = (CreateEditorGame_t)GetProcAddress(hmodule, "CreateEditorGame");
+	CreateGame_p = (CreateGame_t)GetProcAddress(hmodule, "CreateGame");
+	CreateGameStartup_p = (CreateGameStartup_t)GetProcAddress(hmodule, "CreateGameStartup");
+	CryModuleGetMemoryInfo_p = (CryModuleGetMemoryInfo_t)GetProcAddress(hmodule, "CryModuleGetMemoryInfo");
 	return hmodule;
 }
 

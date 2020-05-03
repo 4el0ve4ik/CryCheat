@@ -1,10 +1,8 @@
 #pragma once
-
-#include "MemoryModule\MemoryModule.h"
-
+#include <Windows.h>
 #define EXPORT extern "C" __declspec(dllexport)
 
-HMEMORYMODULE LoadCryGame();
+HMODULE LoadCryGame();
 
 typedef long long int64_t;
 typedef int64_t(*CreateEditorGame_t)();

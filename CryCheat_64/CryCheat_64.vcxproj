@@ -82,6 +82,7 @@
     <LinkIncremental>false</LinkIncremental>
     <TargetName>CryGame</TargetName>
     <OutDir>..\..\..\..\..\Games\Crysis\Bin64</OutDir>
+    <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -158,7 +159,6 @@
     <ClCompile Include="..\ImGUI\imgui_impl_win32.cpp" />
     <ClCompile Include="..\ImGUI\imgui_widgets.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="MemoryModule\MemoryModule.c" />
     <ClCompile Include="proxyCryGame.cpp" />
     <ClCompile Include="Render.cpp" />
   </ItemGroup>
@@ -172,9 +172,7 @@
     <ClInclude Include="..\ImGUI\imstb_rectpack.h" />
     <ClInclude Include="..\ImGUI\imstb_textedit.h" />
     <ClInclude Include="..\ImGUI\imstb_truetype.h" />
-    <ClInclude Include="CryGame_dll.hpp" />
     <ClInclude Include="main.h" />
-    <ClInclude Include="MemoryModule\MemoryModule.h" />
     <ClInclude Include="proxyCryGame.h" />
     <ClInclude Include="Render.h" />
   </ItemGroup>

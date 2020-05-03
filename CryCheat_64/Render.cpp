@@ -1,7 +1,6 @@
 #include "Render.h"
 #include <string>
 WNDPROC oldWNDPROC = nullptr;
-bool gShowDemo = false;
 ID3D10Device * pDevice = NULL;
 bool gInitialized = false;
 bool CheatMenuActive = false;
@@ -10,8 +9,9 @@ bool CheckPressed = false;
 extern AddressDll AddressDLL;
 extern 	D3D10HK::IDXGISwapChain__Present Present;
 extern int64_t __stdcall AddConsoleMessage(const std::string& message);
-const std::string oByte[9]{ "\x45\x89\x41\x28", "\xF3\x0F\x11\x73\x48", "\x89\x45\x4C", "\xF3\x0F\x11\x4F\x60", "\x89\x79\x28", 
-"\xF3\x0F\x11\x83\x40\x02\x00\x00", "\xF3\x0F\x11\x45\x30", "\xF3\x0F\x11\x8B\x18\x06\x00\x00", "\xF3\x0F\x11\x83\x18\x06\x00\x00" };
+const std::string oByte[9]{ "\x45\x89\x41\x28", "\xF3\x0F\x11\x73\x48", "\x89\x45\x4C",
+"\xF3\x0F\x11\x4F\x60", "\x89\x79\x28","\xF3\x0F\x11\x83\x40\x02\x00\x00", "\xF3\x0F\x11\x45\x30",
+"\xF3\x0F\x11\x8B\x18\x06\x00\x00", "\xF3\x0F\x11\x83\x18\x06\x00\x00" };
 /////////////////////////////////////functions of CryGame///////////////////////////////////
 const unsigned __int64 MOVEAMMOINCLIP = 0x18773A;
 const unsigned __int64 MOVEENERGY[2]{0x3C954, 0x411F0};
@@ -54,7 +54,6 @@ LRESULT WINAPI NWNDPROC(HWND hWND, UINT Msg, WPARAM wParam, LPARAM lParam)
 
 	if (Msg == WM_KEYUP)
 	{
-		if (wParam == 72) gShowDemo ^= true;
 		if (wParam == 45) {
 			CheatMenuActive ^= true; 
 			ShowCursor(CheatMenuActive);
@@ -70,14 +69,11 @@ void CheckBox(const std::string& label, bool* boolean) {
 		CheckPressed = true;
 	}
 }
-unsigned __int64 pool = 0;
 void Menu(bool* p_open) {
 	if (!ImGui::Begin("CryCheat", p_open,ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::End();
 		return;
 	}
-	ImGui::Text("%x", pool);
-	ImGui::Text("%x", AddressDLL.pCPlayer);
 	CheckBox("GoodMode", &CActivation.GoodMode);
 	CheckBox("No Reloading Weapon", &CActivation.NoReloadingWeapon);
 	CheckBox("Unlimited Ammo", &CActivation.UnlimitedAmmo);
@@ -124,10 +120,6 @@ HRESULT HookedPresentD3D10(IDXGISwapChain * pSwap, UINT SyncInterval, UINT Flags
 			Menu(&CheatMenuActive);
 		}
 
-		if (gShowDemo) {
-			ImGui::ShowDemoWindow(&gShowDemo);
-		}
-
 		ImGui::EndFrame();
 
 		ImGui::Render();
@@ -158,7 +150,6 @@ void UpdateCheat() {
 			pCPlayer = *(unsigned __int64*)(pCPlayer + 0xF0);
 			if (pCPlayer)
 				pCPlayer = *(unsigned __int64*)(pCPlayer + 0x28);
-			pool = pCPlayer;
 			if (pCPlayer)
 				pCPlayer = *(unsigned __int64*)(pCPlayer);
 			if (pCPlayer)

@@ -19,7 +19,7 @@ inline unsigned __int64 GetModuleH(LPCSTR module)
 }
 
 extern 	D3D10HK::IDXGISwapChain__Present Present = nullptr;
-bool Init(HMEMORYMODULE hCryGame)
+bool Init()
 {
 	if (!(AddressDLL.CryAction = GetModuleH(CRYSIS_ACTION))) return false;
 	if (!(AddressDLL.CrySystem = GetModuleH(CRYSIS_SYSTEM))) return false;
@@ -41,10 +41,10 @@ bool Init(HMEMORYMODULE hCryGame)
 	return true;
 }
 
-void Thread(HMEMORYMODULE hCryGame)
+void Thread(void* hCryGame)
 {
-	AddressDLL.CryGame = *(DWORD*)((*(DWORD**)&hCryGame) + 2);
-	while (!Init(hCryGame)) 
+	AddressDLL.CryGame = (unsigned long long)hCryGame;
+	while (!Init()) 
 		Sleep(350);
 	while (true)
 	{
@@ -53,19 +53,12 @@ void Thread(HMEMORYMODULE hCryGame)
 	}
 }
 
-
 BOOL WINAPI DllMain(HINSTANCE hInst, DWORD fdwReason, LPVOID)
 {
 	if (fdwReason == 1)
 	{
-		HMEMORYMODULE hCryGame = LoadCryGame();
+		HMODULE hCryGame = LoadCryGame();
 		_beginthread(Thread, NULL, hCryGame);
 	}
 	return TRUE;
 }
-
-/*TODO:////////////////////////////////////////////////////////////////////////////////////////////
-Vehicle goodmod //
-no spread
-one hit kill 
-*/

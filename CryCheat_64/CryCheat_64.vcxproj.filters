@@ -13,9 +13,6 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="MemoryModule">
-      <UniqueIdentifier>{7e80439a-ca3a-4eb0-9e5d-c0a6e854b4bf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="proxyCryGame">
       <UniqueIdentifier>{b5d0ed58-6792-4edb-93f7-5705c41e486a}</UniqueIdentifier>
     </Filter>
@@ -27,9 +24,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="MemoryModule\MemoryModule.c">
-      <Filter>MemoryModule</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Файлы исходного кода</Filter>
     </ClCompile>
@@ -62,14 +56,8 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="MemoryModule\MemoryModule.h">
-      <Filter>MemoryModule</Filter>
-    </ClInclude>
     <ClInclude Include="main.h">
       <Filter>Заголовочные файлы</Filter>
-    </ClInclude>
-    <ClInclude Include="CryGame_dll.hpp">
-      <Filter>proxyCryGame</Filter>
     </ClInclude>
     <ClInclude Include="proxyCryGame.h">
       <Filter>proxyCryGame</Filter>
