@@ -8,4 +8,4 @@ installing:
 + run game.
 
 Activation: (ins)ert.
-![alt text](https://i.imgur.com/arWaFvv.png)
+![alt text](https://i.imgur.com/dYq4mNj.png)
