@@ -48,7 +48,7 @@ struct _CheatActivation {
 	bool UnlimitedAmmo = false;
 	bool UnlimitedNightVision = false;
 	bool NoTimeReloadTB = false;
-	bool NoOwerheat = false;
+	bool NoOverheat = false;
 	bool SpeedHack = false;
 	float speed = 100.0;
 	bool NoReloadingWeapon = false;
@@ -87,7 +87,7 @@ void Menu(bool* p_open) {
 	CheckBox("No Reloading Weapon", &CActivation.NoReloadingWeapon);
 	CheckBox("Unlimited Ammo", &CActivation.UnlimitedAmmo);
 	CheckBox("One Hit Kill", &CActivation.OneHitKill);
-	CheckBox("No Owerheat", &CActivation.NoOwerheat);
+	CheckBox("No Overheat", &CActivation.NoOverheat);
 	CheckBox("No Reload Poison Dart", &CActivation.NoTimeReloadTB);
 	CheckBox("Unlimited Night Vision", &CActivation.UnlimitedNightVision);
 	CheckBox("Unlimited Energy", &CActivation.UnlimitedEnergy);
@@ -240,7 +240,7 @@ void UpdateCheat() {
 		}
 		else { restoreoriginalbyte((void*)(AddressDLL.CryGame + INCREASETIMERPOISONDART), (PBYTE)oByte[ioBYTE::bIncreaseTimerPoisonDart].c_str(), 5); }
 
-		if (CActivation.NoOwerheat) {
+		if (CActivation.NoOverheat) {
 			nop((void*)(AddressDLL.CryGame + OWERHEAT[0]), 8);
 			nop((void*)(AddressDLL.CryGame + OWERHEAT[1]), 8);
 		}
@@ -250,7 +250,7 @@ void UpdateCheat() {
 		}
 		CheckPressed = false;
 	}
-	if (AddressDLL.pCModeCostum > 0) {
+	if (AddressDLL.pCPlayer > 0) {
 		if (CActivation.SpeedHack) {
 			*reinterpret_cast<float*>(AddressDLL.pCModeCostum + 0x90) = CActivation.speed;
 			*reinterpret_cast<float*>(AddressDLL.pCModeCostum + 0x94) = CActivation.speed;
