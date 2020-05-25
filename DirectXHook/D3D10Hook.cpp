@@ -1,5 +1,4 @@
 #include "D3D10Hook.h"
-#include <string>
 
 D3D10HOOK::D3D10HOOK(HWND hWnd) {
 	if (!initializedHook) {
