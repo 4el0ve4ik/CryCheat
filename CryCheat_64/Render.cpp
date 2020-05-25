@@ -1,16 +1,25 @@
 #include "Render.h"
 #include <string>
+//#include "../minhook/MinHook.h"
+#include <Windows.h>
+
+D3D10HOOK *d3d10hk = nullptr;
 WNDPROC oldWNDPROC = nullptr;
-ID3D10Device * pDevice = NULL;
+
 bool gInitialized = false;
 bool CheatMenuActive = false;
 bool CheckPressed = false;
 
 extern AddressDll AddressDLL;
-extern 	D3D10HK::IDXGISwapChain__Present Present;
+typedef HRESULT(__stdcall *oPresent)(IDXGISwapChain * pSwap, UINT SyncInterval, UINT Flags);
+oPresent Present;
+
+typedef signed __int64(__stdcall *osetHealth)(__int64, int);
+osetHealth psetHealth = nullptr;
+
 extern int64_t __stdcall AddConsoleMessage(const std::string& message);
 const std::string oByte[9]{ "\x45\x89\x41\x28", "\xF3\x0F\x11\x73\x48", "\x89\x45\x4C",
-"\xF3\x0F\x11\x4F\x60", "\x89\x79\x28","\xF3\x0F\x11\x83\x40\x02\x00\x00", "\xF3\x0F\x11\x45\x30",
+"\x89\x79\x28","\xF3\x0F\x11\x83\x40\x02\x00\x00", "\xF3\x0F\x11\x45\x30",
 "\xF3\x0F\x11\x8B\x18\x06\x00\x00", "\xF3\x0F\x11\x83\x18\x06\x00\x00" };
 /////////////////////////////////////functions of CryGame///////////////////////////////////
 const unsigned __int64 MOVEAMMOINCLIP = 0x18773A;
@@ -26,7 +35,6 @@ enum ioBYTE {
 	bMoveAmmoInClip = 0,
 	bMoveEnergy1,
 	bMoveEnergy2,
-	bMoveHealth,
 	bMoveAmmo,
 	bDecreaseNightVision,
 	bIncreaseTimerPoisonDart,
@@ -35,7 +43,7 @@ enum ioBYTE {
 };
 
 struct _CheatActivation {
-	bool GoodMode = false;
+	bool GodMode = false;
 	bool UnlimitedEnergy = false;
 	bool UnlimitedAmmo = false;
 	bool UnlimitedNightVision = false;
@@ -44,6 +52,7 @@ struct _CheatActivation {
 	bool SpeedHack = false;
 	float speed = 100.0;
 	bool NoReloadingWeapon = false;
+	bool OneHitKill = false;
 } CActivation;
 
 extern LRESULT ImGui_ImplWin32_WndProcHandler(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
@@ -74,9 +83,10 @@ void Menu(bool* p_open) {
 		ImGui::End();
 		return;
 	}
-	CheckBox("GoodMode", &CActivation.GoodMode);
+	CheckBox("GodMode", &CActivation.GodMode);
 	CheckBox("No Reloading Weapon", &CActivation.NoReloadingWeapon);
 	CheckBox("Unlimited Ammo", &CActivation.UnlimitedAmmo);
+	CheckBox("One Hit Kill", &CActivation.OneHitKill);
 	CheckBox("No Owerheat", &CActivation.NoOwerheat);
 	CheckBox("No Reload Poison Dart", &CActivation.NoTimeReloadTB);
 	CheckBox("Unlimited Night Vision", &CActivation.UnlimitedNightVision);
@@ -86,10 +96,42 @@ void Menu(bool* p_open) {
 		ImGui::SliderFloat("##Speed", &CActivation.speed, 1.0F, 1000.0F, "%.0f");
 }
 
-HRESULT HookedPresentD3D10(IDXGISwapChain * pSwap, UINT SyncInterval, UINT Flags)
+void InjectJmp(__int64 _offset, void* target)
+{
+	void *pBlock = VirtualAlloc(0, 0x1000, MEM_COMMIT | MEM_RESERVE, PAGE_EXECUTE_READWRITE);
+	unsigned long Protection;
+	VirtualProtect((void*)_offset, 5, PAGE_EXECUTE_READWRITE, &Protection);
+	__int64 offs = (__int64)pBlock - (_offset + 5);
+	*((unsigned char*)_offset) = 0xE9;
+	memcpy((LPVOID)(_offset + 1), &offs, 4);
+	VirtualProtect((void*)_offset, 5, Protection, 0);
+	memcpy(pBlock, "\xFF\x15\x02\x00\x00\x00\xEB\x08", 8);
+	memcpy((void*)((__int64)pBlock + 8), &target, sizeof(target));
+	memcpy((void*)((__int64)pBlock + 16), "\xFF\x25\x00\x00\x00\x00", 6);
+	__int64 retAddr = _offset + 5;
+	memcpy((void*)((__int64)pBlock + 22), &retAddr, sizeof(retAddr));
+}
+
+signed __int64 __fastcall setHealth(__int64 CPlayer, int health) {
+	if (*reinterpret_cast<unsigned long long*>(CPlayer + 0x628) == AddressDLL.pCPlayer) {
+		if (CActivation.GodMode)
+			return psetHealth(CPlayer, *reinterpret_cast<int*>(CPlayer + 0x60));
+		return psetHealth(CPlayer, health);
+	}
+	if (CActivation.OneHitKill) return psetHealth(CPlayer, 0);
+
+	return psetHealth(CPlayer, health);
+}
+//((signed __int64(__stdcall *)(__int64, int))(AddressDLL.CryGame + 0xB9B0))(CPlayer, health);
+HRESULT HookedPresentD3D10(IDXGISwapChain *pSwap, UINT SyncInterval, UINT Flags)
 {
 	if (!gInitialized)
 	{
+		psetHealth = (osetHealth)(AddressDLL.CryGame + 0xB9B0);
+		InjectJmp(AddressDLL.CryGame + 0x60F5D, &setHealth);
+		AddConsoleMessage("Hook setHealth Created");
+		
+		ID3D10Device * pDevice = NULL;
 		DXGI_SWAP_CHAIN_DESC sd;
 		pSwap->GetDesc(&sd);
 		HWND ghWnd = nullptr;
@@ -103,12 +145,11 @@ HRESULT HookedPresentD3D10(IDXGISwapChain * pSwap, UINT SyncInterval, UINT Flags
 		ImGui_ImplWin32_Init(ghWnd);
 		ImGui_ImplDX10_Init(pDevice);
 		io.ImeWindowHandle = ghWnd;
-
+		
 		oldWNDPROC = (WNDPROC)SetWindowLongPtr(ghWnd, -4, reinterpret_cast<LONG_PTR>(NWNDPROC));
 		AddConsoleMessage("Present initialized");
-
-		DWORD oldProt = 0;
-
+		
+		Present = (oPresent)d3d10hk->GetOriginSwapChainFunc(SwapChainIndex::iPresent);
 		gInitialized = true;
 	} else {
 
@@ -123,7 +164,7 @@ HRESULT HookedPresentD3D10(IDXGISwapChain * pSwap, UINT SyncInterval, UINT Flags
 		ImGui::EndFrame();
 
 		ImGui::Render();
-
+		
 		ImGui_ImplDX10_RenderDrawData(ImGui::GetDrawData());
 	}
 	return Present(pSwap, SyncInterval, Flags);
@@ -144,6 +185,7 @@ void restoreoriginalbyte(void* address, const void* value, size_t size) {
 }
 
 void UpdateCheat() {
+	
 	if (AddressDLL.pCPlayer == 0) {
 		unsigned __int64 pCPlayer = *(unsigned __int64*)(AddressDLL.CryAction + 0x465C00);
 		if (pCPlayer) {
@@ -177,13 +219,6 @@ void UpdateCheat() {
 			restoreoriginalbyte((void*)(AddressDLL.CryAction + MOVEAMMO), (PBYTE)oByte[ioBYTE::bMoveAmmo].c_str(), 3);
 		}
 
-		if (CActivation.GoodMode) {
-			nop((void*)(AddressDLL.CryGame + MOVEHEALTH), 5);
-		}
-		else {
-			restoreoriginalbyte((void*)(AddressDLL.CryGame + MOVEHEALTH), (PBYTE)oByte[ioBYTE::bMoveHealth].c_str(), 5);
-		}
-
 		if (CActivation.UnlimitedNightVision) {
 			nop((void*)(AddressDLL.CryGame + DECREASENIGHTVISION), 8);
 		}
@@ -215,11 +250,20 @@ void UpdateCheat() {
 		}
 		CheckPressed = false;
 	}
-	if (AddressDLL.pCPlayer > 0) {
+	if (AddressDLL.pCModeCostum > 0) {
 		if (CActivation.SpeedHack) {
-			*reinterpret_cast<float*>(AddressDLL.pCPlayer + 0x90) = CActivation.speed;
-			*reinterpret_cast<float*>(AddressDLL.pCPlayer + 0x94) = CActivation.speed;
+			*reinterpret_cast<float*>(AddressDLL.pCModeCostum + 0x90) = CActivation.speed;
+			*reinterpret_cast<float*>(AddressDLL.pCModeCostum + 0x94) = CActivation.speed;
 		}
 	}
 }
 
+bool InitHookDX(HWND hwnd) {
+	d3d10hk = new D3D10HOOK(hwnd);
+	if (!d3d10hk->GetHookStatus())
+		return false;
+
+	d3d10hk->SetSwapChainHook(&HookedPresentD3D10, SwapChainIndex::iPresent);
+
+	return true;
+}

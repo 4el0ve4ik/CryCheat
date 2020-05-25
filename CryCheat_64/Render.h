@@ -4,8 +4,8 @@
 #include "../ImGUI/imgui_impl_dx10.h"
 #include "../ImGUI/imgui_impl_win32.h"
 
-HRESULT HookedPresentD3D10(IDXGISwapChain * pSwap, UINT SyncInterval, UINT Flags);
 void UpdateCheat();
+bool InitHookDX(HWND);
 struct AddressDll
 {
 	unsigned __int64 CryGame;
@@ -17,4 +17,5 @@ struct AddressDll
 		unsigned __int64 DX10;
 	}Render;
 	unsigned __int64 pCPlayer;
+	unsigned __int64 pCModeCostum;
 };

@@ -1,4 +1,5 @@
 #include "main.h"
+#include <fstream>
 
 HWND ghWnd = nullptr;
 extern AddressDll AddressDLL{ 0 };
@@ -18,7 +19,6 @@ inline unsigned __int64 GetModuleH(LPCSTR module)
 	return reinterpret_cast<unsigned __int64>(GetModuleHandle(module));
 }
 
-extern 	D3D10HK::IDXGISwapChain__Present Present = nullptr;
 bool Init()
 {
 	if (!(AddressDLL.CryAction = GetModuleH(CRYSIS_ACTION))) return false;
@@ -29,15 +29,10 @@ bool Init()
 	
 	ghWnd = GetForegroundWindow();
 	if (!ghWnd)	return false;
-
-
-
 	if (AddressDLL.Render.DX10) {
-		if (D3D10HK::InitiateHook(ghWnd, &HookedPresentD3D10, &Present))
-			return true;
+		return InitHookDX(ghWnd);
 	}
 	
-
 	return true;
 }
 
