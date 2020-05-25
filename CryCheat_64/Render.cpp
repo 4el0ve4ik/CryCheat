@@ -252,8 +252,8 @@ void UpdateCheat() {
 	}
 	if (AddressDLL.pCPlayer > 0) {
 		if (CActivation.SpeedHack) {
-			*reinterpret_cast<float*>(AddressDLL.pCModeCostum + 0x90) = CActivation.speed;
-			*reinterpret_cast<float*>(AddressDLL.pCModeCostum + 0x94) = CActivation.speed;
+			*reinterpret_cast<float*>(AddressDLL.pCPlayer + 0x90) = CActivation.speed;
+			*reinterpret_cast<float*>(AddressDLL.pCPlayer + 0x94) = CActivation.speed;
 		}
 	}
 }
