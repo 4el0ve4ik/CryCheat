@@ -81,7 +81,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <TargetName>CryGame</TargetName>
-    <OutDir>..\..\..\..\..\Games\Crysis\Bin64</OutDir>
+    <OutDir>D:\Games\Crysis\Bin64</OutDir>
     <IncludePath>$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">

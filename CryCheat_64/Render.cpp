@@ -152,20 +152,21 @@ HRESULT HookedPresentD3D10(IDXGISwapChain *pSwap, UINT SyncInterval, UINT Flags)
 		Present = (oPresent)d3d10hk->GetOriginSwapChainFunc(SwapChainIndex::iPresent);
 		gInitialized = true;
 	} else {
-
-		ImGui_ImplWin32_NewFrame();
-		ImGui_ImplDX10_NewFrame();
-		ImGui::NewFrame();
-
 		if (CheatMenuActive) {
+			ImGui_ImplWin32_NewFrame();
+			ImGui_ImplDX10_NewFrame();
+			ImGui::NewFrame();
+
+
 			Menu(&CheatMenuActive);
+
+
+			ImGui::EndFrame();
+
+			ImGui::Render();
+
+			ImGui_ImplDX10_RenderDrawData(ImGui::GetDrawData());
 		}
-
-		ImGui::EndFrame();
-
-		ImGui::Render();
-		
-		ImGui_ImplDX10_RenderDrawData(ImGui::GetDrawData());
 	}
 	return Present(pSwap, SyncInterval, Flags);
 }
