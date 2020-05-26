@@ -1,8 +1,8 @@
 #pragma once
 #include "../DirectXHook/D3D10Hook.h"
-#include "../ImGUI/imgui.h"
-#include "../ImGUI/imgui_impl_dx10.h"
-#include "../ImGUI/imgui_impl_win32.h"
+#include "../imgui/imgui.h"
+#include "../imgui/examples/imgui_impl_dx10.h"
+#include "../imgui/examples/imgui_impl_win32.h"
 
 void UpdateCheat();
 bool InitHookDX(HWND);
