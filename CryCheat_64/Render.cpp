@@ -1,6 +1,5 @@
 #include "Render.h"
 #include <string>
-//#include "../minhook/MinHook.h"
 #include <Windows.h>
 
 D3D10HOOK *d3d10hk = nullptr;
