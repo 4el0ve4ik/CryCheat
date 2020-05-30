@@ -108,11 +108,12 @@ void InjectJmp(__int64 _offset, void* target)
 	memcpy((void*)((__int64)pBlock + 8), &target, sizeof(target));
 	memcpy((void*)((__int64)pBlock + 16), "\xFF\x25\x00\x00\x00\x00", 6);
 	__int64 retAddr = _offset + 5;
-	memcpy((void*)((__int64)pBlock + 22), &retAddr, sizeof(retAddr));
+	memcpy((void*)((__int64)pBlock + 22), &retAddr, sizeof(retAddr)); 
 }
 
 signed __int64 __fastcall setHealth(__int64 CPlayer, int health) {
-	if (*reinterpret_cast<unsigned long long*>(CPlayer + 0x628) == AddressDLL.pCPlayer) {
+	if (*reinterpret_cast<unsigned long long*>(CPlayer + 0x628) == AddressDLL.pCModeCostum) {
+		AddressDLL.pCPlayer = CPlayer;
 		if (CActivation.GodMode)
 			return psetHealth(CPlayer, *reinterpret_cast<int*>(CPlayer + 0x60));
 		return psetHealth(CPlayer, health);
@@ -186,20 +187,21 @@ void restoreoriginalbyte(void* address, const void* value, size_t size) {
 
 void UpdateCheat() {
 	
-	if (AddressDLL.pCPlayer == 0) {
-		unsigned __int64 pCPlayer = *(unsigned __int64*)(AddressDLL.CryAction + 0x465C00);
-		if (pCPlayer) {
-			pCPlayer = *(unsigned __int64*)(pCPlayer + 0xF0);
-			if (pCPlayer)
-				pCPlayer = *(unsigned __int64*)(pCPlayer + 0x28);
-			if (pCPlayer)
-				pCPlayer = *(unsigned __int64*)(pCPlayer);
-			if (pCPlayer)
-				pCPlayer = *(unsigned __int64*)(pCPlayer + 0xD0);
-			if (pCPlayer)
-				pCPlayer = *(unsigned __int64*)(pCPlayer + 0x68);
-			if (pCPlayer)
-				AddressDLL.pCPlayer = *(unsigned __int64*)(pCPlayer + 0x70);
+	if (AddressDLL.pCModeCostum == 0) {
+		unsigned __int64 pCModeCostum = *(unsigned __int64*)(AddressDLL.CryAction + 0x465C00);
+		if (pCModeCostum) {
+			pCModeCostum = *(unsigned __int64*)(pCModeCostum + 0xF0);
+			if (pCModeCostum)
+				pCModeCostum = *(unsigned __int64*)(pCModeCostum + 0x28);
+			if (pCModeCostum)
+				pCModeCostum = *(unsigned __int64*)(pCModeCostum);
+			if (pCModeCostum)
+				pCModeCostum = *(unsigned __int64*)(pCModeCostum + 0xD0);
+			if (pCModeCostum)
+				pCModeCostum = *(unsigned __int64*)(pCModeCostum + 0x68);
+			if (pCModeCostum) {
+				AddressDLL.pCModeCostum = *(unsigned __int64*)(pCModeCostum + 0x70);
+			}
 		}
 	}
 	
@@ -250,10 +252,10 @@ void UpdateCheat() {
 		}
 		CheckPressed = false;
 	}
-	if (AddressDLL.pCPlayer > 0) {
+	if (AddressDLL.pCModeCostum > 0) {
 		if (CActivation.SpeedHack) {
-			*reinterpret_cast<float*>(AddressDLL.pCPlayer + 0x90) = CActivation.speed;
-			*reinterpret_cast<float*>(AddressDLL.pCPlayer + 0x94) = CActivation.speed;
+			*reinterpret_cast<float*>(AddressDLL.pCModeCostum + 0x90) = CActivation.speed;
+			*reinterpret_cast<float*>(AddressDLL.pCModeCostum + 0x94) = CActivation.speed;
 		}
 	}
 }
