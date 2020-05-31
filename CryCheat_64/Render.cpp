@@ -101,7 +101,7 @@ void InjectJmp(__int64 _offset, void* target)
 	unsigned long Protection;
 	VirtualProtect((void*)_offset, 5, PAGE_EXECUTE_READWRITE, &Protection);
 	__int64 offs = (__int64)pBlock - (_offset + 5);
-	*((unsigned char*)_offset) = 0xE9;
+	*reinterpret_cast<unsigned char*>(_offset) = 0xE9;
 	memcpy((LPVOID)(_offset + 1), &offs, 4);
 	VirtualProtect((void*)_offset, 5, Protection, 0);
 	memcpy(pBlock, "\xFF\x15\x02\x00\x00\x00\xEB\x08", 8);
