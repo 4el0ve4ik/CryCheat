@@ -1,7 +1,6 @@
 #include "main.h"
 #include <fstream>
 
-HWND ghWnd = nullptr;
 extern AddressDll AddressDLL{ 0 };
 
 extern int64_t __stdcall AddConsoleMessage(const std::string& message)
@@ -27,7 +26,7 @@ bool Init()
 	AddressDLL.Render.DX10 = GetModuleH(CRYSIS_RENDERDX10);
 	if (AddressDLL.Render.DX10 == 0 && AddressDLL.Render.DX9 == 0) return false;
 	
-	ghWnd = GetForegroundWindow();
+	HWND ghWnd = GetForegroundWindow();
 	if (!ghWnd)	return false;
 	if (AddressDLL.Render.DX10) {
 		return InitHookDX(ghWnd);
