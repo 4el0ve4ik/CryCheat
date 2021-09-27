@@ -28,10 +28,10 @@ EXPORT int64_t  CryModuleGetMemoryInfo(int64_t arg)
 HMODULE LoadCryGame()
 {
 	HMODULE hmodule = LoadLibrary("CryGameHooked.dll");
-	CreateEditorGame_p = (CreateEditorGame_t)GetProcAddress(hmodule, "CreateEditorGame");
-	CreateGame_p = (CreateGame_t)GetProcAddress(hmodule, "CreateGame");
-	CreateGameStartup_p = (CreateGameStartup_t)GetProcAddress(hmodule, "CreateGameStartup");
-	CryModuleGetMemoryInfo_p = (CryModuleGetMemoryInfo_t)GetProcAddress(hmodule, "CryModuleGetMemoryInfo");
+	CreateEditorGame_p = reinterpret_cast<CreateEditorGame_t>(GetProcAddress(hmodule, "CreateEditorGame"));
+	CreateGame_p = reinterpret_cast<CreateGame_t>(GetProcAddress(hmodule, "CreateGame"));
+	CreateGameStartup_p = reinterpret_cast<CreateGameStartup_t>(GetProcAddress(hmodule, "CreateGameStartup"));
+	CryModuleGetMemoryInfo_p = reinterpret_cast<CryModuleGetMemoryInfo_t>(GetProcAddress(hmodule, "CryModuleGetMemoryInfo"));
 	return hmodule;
 }
 
