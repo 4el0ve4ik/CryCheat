@@ -9,3 +9,5 @@ installing:
 
 Activation: (ins)ert.
 ![alt text](https://i.imgur.com/0aMqTkr.png)
+
+if something doesn't work - click "refresh structure"!
