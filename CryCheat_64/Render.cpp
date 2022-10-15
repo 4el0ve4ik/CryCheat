@@ -71,12 +71,31 @@ LRESULT WINAPI NWNDPROC(HWND hWND, UINT Msg, WPARAM wParam, LPARAM lParam)
 	return CallWindowProc(oldWNDPROC, hWND, Msg, wParam, lParam);
 }
 
+void UpdateStructure() {
+	unsigned __int64 pCModeCostum = *(unsigned __int64*)(AddressDLL.CryAction + 0x465C00);
+	if (pCModeCostum) {
+		pCModeCostum = *(unsigned __int64*)(pCModeCostum + 0xF0);
+		if (pCModeCostum)
+			pCModeCostum = *(unsigned __int64*)(pCModeCostum + 0x28);
+		if (pCModeCostum)
+			pCModeCostum = *(unsigned __int64*)(pCModeCostum);
+		if (pCModeCostum)
+			pCModeCostum = *(unsigned __int64*)(pCModeCostum + 0xD0);
+		if (pCModeCostum)
+			pCModeCostum = *(unsigned __int64*)(pCModeCostum + 0x68);
+		if (pCModeCostum) {
+			AddressDLL.pCModeCostum = *(unsigned __int64*)(pCModeCostum + 0x70);
+		}
+	}
+}
+
 void CheckBox(const std::string& label, bool* boolean) {
 	if (ImGui::Checkbox(label.c_str(), boolean)) {
 		AddConsoleMessage(label + ": " + (*boolean ? "Enable" : "Disable"));
 		CheckPressed = true;
 	}
 }
+
 void Menu(bool* p_open) {
 	if (!ImGui::Begin("CryCheat", p_open,ImGuiWindowFlags_AlwaysAutoResize)) {
 		ImGui::End();
@@ -93,6 +112,9 @@ void Menu(bool* p_open) {
 	CheckBox("Speed Hack", &CActivation.SpeedHack);
 	if (CActivation.SpeedHack)
 		ImGui::SliderFloat("##Speed", &CActivation.speed, 1.0F, 1000.0F, "%.0f");
+	if (ImGui::Button("refresh structure")) {
+		UpdateStructure();
+	}
 }
 
 void InjectJmp(__int64 _offset, void* target)
@@ -187,22 +209,9 @@ void restoreoriginalbyte(void* address, const void* value, size_t size) {
 
 void UpdateCheat() {
 	
+
 	if (AddressDLL.pCModeCostum == 0) {
-		unsigned __int64 pCModeCostum = *(unsigned __int64*)(AddressDLL.CryAction + 0x465C00);
-		if (pCModeCostum) {
-			pCModeCostum = *(unsigned __int64*)(pCModeCostum + 0xF0);
-			if (pCModeCostum)
-				pCModeCostum = *(unsigned __int64*)(pCModeCostum + 0x28);
-			if (pCModeCostum)
-				pCModeCostum = *(unsigned __int64*)(pCModeCostum);
-			if (pCModeCostum)
-				pCModeCostum = *(unsigned __int64*)(pCModeCostum + 0xD0);
-			if (pCModeCostum)
-				pCModeCostum = *(unsigned __int64*)(pCModeCostum + 0x68);
-			if (pCModeCostum) {
-				AddressDLL.pCModeCostum = *(unsigned __int64*)(pCModeCostum + 0x70);
-			}
-		}
+		UpdateStructure();
 	}
 	
 	if (CheckPressed)
@@ -250,6 +259,7 @@ void UpdateCheat() {
 			restoreoriginalbyte((void*)(AddressDLL.CryGame + OWERHEAT[0]), (PBYTE)oByte[ioBYTE::bOwerheat1].c_str(), 8);
 			restoreoriginalbyte((void*)(AddressDLL.CryGame + OWERHEAT[1]), (PBYTE)oByte[ioBYTE::bOwerheat2].c_str(), 8);
 		}
+
 		CheckPressed = false;
 	}
 	if (AddressDLL.pCModeCostum > 0) {
